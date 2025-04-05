@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>Image Size Converter</title>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+
+        * {
+
+            box-sizing: border-box;
+
+            margin: 0;
+
+            padding: 0;
+
+        }
+
+
+
+        body {
+
+            font-family: 'Roboto', sans-serif;
+
+            background: #f0f2f5;
+
+            color: #333;
+
+            min-height: 100vh;
+
+            padding: 1rem;
+
+        }
+
+
+
+        .container {
+
+            background: white;
+
+            max-width: 600px;
+
+            margin: 0 auto;
+
+            padding: 2rem;
+
+            border-radius: 16px;
+
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+
+        }
+
+
+
+        h1 {
+
+            text-align: center;
+
+            color: #2d3436;
+
+            margin-bottom: 2rem;
+
+            font-size: 1.8rem;
+
+        }
+
+
+
+        .upload-section {
+
+            border: 2px dashed #b2bec3;
+
+            border-radius: 12px;
+
+            padding: 2rem;
+
+            text-align: center;
+
+            margin-bottom: 2rem;
+
+            position: relative;
+
+            transition: all 0.3s ease;
+
+        }
+
+
+
+        .upload-section:hover {
+
+            border-color: #6c5ce7;
+
+            background: #f8f9fa;
+
+        }
+
+
+
+        #imageInput {
+
+            opacity: 0;
+
+            position: absolute;
+
+            top: 0;
+
+            left: 0;
+
+            width: 100%;
+
+            height: 100%;
+
+            cursor: pointer;
+
+        }
+
+
+
+        .upload-label {
+
+            display: flex;
+
+            flex-direction: column;
+
+            align-items: center;
+
+            gap: 1rem;
+
+            color: #636e72;
+
+        }
+
+
+
+        .upload-icon {
+
+            font-size: 2.5rem;
+
+            color: #6c5ce7;
+
+        }
+
+
+
+        .dimension-controls {
+
+            display: grid;
+
+            gap: 1rem;
+
+            margin-bottom: 1.5rem;
+
+        }
+
+
+
+        .input-group {
+
+            position: relative;
+
+        }
+
+
+
+        .input-group label {
+
+            display: block;
+
+            margin-bottom: 0.5rem;
+
+            color: #2d3436;
+
+            font-weight: 500;
+
+        }
+
+
+
+        .input-group input {
+
+            width: 100%;
+
+            padding: 0.8rem;
+
+            border: 2px solid #dfe6e9;
+
+            border-radius: 8px;
+
+            font-size: 1rem;
+
+            transition: border-color 0.3s ease;
+
+        }
+
+
+
+        .input-group input:focus {
+
+            outline: none;
+
+            border-color: #6c5ce7;
+
+        }
+
+
+
+        .aspect-ratio-toggle {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 0.5rem;
+
+            margin-bottom: 1.5rem;
+
+        }
+
+
+
+        .switch {
+
+            position: relative;
+
+            display: inline-block;
+
+            width: 48px;
+
+            height: 24px;
+
+        }
+
+
+
+        .switch input {
+
+            opacity: 0;
+
+            width: 0;
+
+            height: 0;
+
+        }
+
+
+
+        .slider {
+
+            position: absolute;
+
+            cursor: pointer;
+
+            top: 0;
+
+            left: 0;
+
+            right: 0;
+
+            bottom: 0;
+
+            background-color: #dfe6e9;
+
+            transition: .4s;
+
+            border-radius: 34px;
+
+        }
+
+
+
+        .slider:before {
+
+            position: absolute;
+
+            content: "";
+
+            height: 20px;
+
+            width: 20px;
+
+            left: 2px;
+
+            bottom: 2px;
+
+            background-color: white;
+
+            transition: .4s;
+
+            border-radius: 50%;
+
+        }
+
+
+
+        input:checked + .slider {
+
+            background-color: #6c5ce7;
+
+        }
+
+
+
+        input:checked + .slider:before {
+
+            transform: translateX(24px);
+
+        }
+
+
+
+        button {
+
+            background: #6c5ce7;
+
+            color: white;
+
+            width: 100%;
+
+            padding: 1rem;
+
+            border: none;
+
+            border-radius: 8px;
+
+            font-size: 1.1rem;
+
+            font-weight: 500;
+
+            cursor: pointer;
+
+            transition: transform 0.2s ease, opacity 0.2s ease;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            gap: 0.5rem;
+
+        }
+
+
+
+        button:active {
+
+            transform: scale(0.98);
+
+            opacity: 0.9;
+
+        }
+
+
+
+        #preview {
+
+            width: 100%;
+
+            max-height: 300px;
+
+            object-fit: contain;
+
+            border-radius: 12px;
+
+            margin-top: 1.5rem;
+
+            display: none;
+
+        }
+
+
+
+        #downloadLink {
+
+            display: none;
+
+            margin-top: 1.5rem;
+
+            text-align: center;
+
+            background: #00b894;
+
+            color: white;
+
+            padding: 1rem;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            font-weight: 500;
+
+        }
+
+
+
+        .loading {
+
+            position: fixed;
+
+            top: 0;
+
+            left: 0;
+
+            right: 0;
+
+            bottom: 0;
+
+            background: rgba(255,255,255,0.9);
+
+            display: none;
+
+            align-items: center;
+
+            justify-content: center;
+
+            z-index: 1000;
+
+        }
+
+
+
+        .spinner {
+
+            width: 40px;
+
+            height: 40px;
+
+            border: 4px solid #f3f3f3;
+
+            border-top: 4px solid #6c5ce7;
+
+            border-radius: 50%;
+
+            animation: spin 1s linear infinite;
+
+        }
+
+
+
+        @keyframes spin {
+
+            0% { transform: rotate(0deg); }
+
+            100% { transform: rotate(360deg); }
+
+        }
+
+
+
+        @media (max-width: 480px) {
+
+            .container {
+
+                padding: 1rem;
+
+                border-radius: 12px;
+
+            }
+
+            
+
+            h1 {
+
+                font-size: 1.5rem;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>📱 Image Resizer</h1>
+
+        
+
+        <div class="upload-section">
+
+            <input type="file" id="imageInput" accept="image/*">
+
+            <label for="imageInput" class="upload-label">
+
+                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+
+                <span>Tap to upload image</span>
+
+            </label>
+
+        </div>
+
+
+
+        <div class="dimension-controls">
+
+            <div class="input-group">
+
+                <label>Width (px)</label>
+
+                <input type="number" id="width" min="1">
+
+            </div>
+
+            
+
+            <div class="input-group">
+
+                <label>Height (px)</label>
+
+                <input type="number" id="height" min="1">
+
+            </div>
+
+        </div>
+
+
+
+        <div class="aspect-ratio-toggle">
+
+            <span>Lock Aspect Ratio:</span>
+
+            <label class="switch">
+
+                <input type="checkbox" id="lockAspect" checked>
+
+                <span class="slider"></span>
+
+            </label>
+
+        </div>
+
+
+
+        <button onclick="convertImage()">
+
+            <i class="fas fa-file-export"></i>
+
+            Convert Image
+
+        </button>
+
+
+
+        <img id="preview" alt="Preview">
+
+        <a id="downloadLink" download="resized-image.jpg">
+
+            <i class="fas fa-download"></i>
+
+            Download Image
+
+        </a>
+
+    </div>
+
+
+
+    <div class="loading">
+
+        <div class="spinner"></div>
+
+    </div>
+
+
+
+    <script>
+
+        const imageInput = document.getElementById('imageInput');
+
+        const widthInput = document.getElementById('width');
+
+        const heightInput = document.getElementById('height');
+
+        const lockAspect = document.getElementById('lockAspect');
+
+        const preview = document.getElementById('preview');
+
+        const downloadLink = document.getElementById('downloadLink');
+
+        const loading = document.querySelector('.loading');
+
+
+
+        let originalWidth, originalHeight, aspectRatio;
+
+
+
+        imageInput.addEventListener('change', function(e) {
+
+            const file = e.target.files[0];
+
+            if (file) {
+
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+
+                    preview.style.display = 'block';
+
+                    preview.src = e.target.result;
+
+                    
+
+                    const img = new Image();
+
+                    img.onload = function() {
+
+                        originalWidth = img.width;
+
+                        originalHeight = img.height;
+
+                        aspectRatio = originalWidth / originalHeight;
+
+                        
+
+                        widthInput.value = originalWidth;
+
+                        heightInput.value = originalHeight;
+
+                    };
+
+                    img.src = e.target.result;
+
+                };
+
+                reader.readAsDataURL(file);
+
+            }
+
+        });
+
+
+
+        // Maintain aspect ratio logic
+
+        widthInput.addEventListener('input', updateHeight);
+
+        heightInput.addEventListener('input', updateWidth);
+
+
+
+        function updateHeight() {
+
+            if (lockAspect.checked && aspectRatio) {
+
+                heightInput.value = Math.round(widthInput.value / aspectRatio);
+
+            }
+
+        }
+
+
+
+        function updateWidth() {
+
+            if (lockAspect.checked && aspectRatio) {
+
+                widthInput.value = Math.round(heightInput.value * aspectRatio);
+
+            }
+
+        }
+
+
+
+        async function convertImage() {
+
+            const width = parseInt(widthInput.value);
+
+            const height = parseInt(heightInput.value);
+
+            
+
+            if (!width || !height) {
+
+                showError('Please enter valid dimensions');
+
+                return;
+
+            }
+
+
+
+            if (!preview.src) {
+
+                showError('Please upload an image first');
+
+                return;
+
+            }
+
+
+
+            loading.style.display = 'flex';
+
+            
+
+            setTimeout(() => { // Simulate processing time
+
+                const canvas = document.createElement('canvas');
+
+                const ctx = canvas.getContext('2d');
+
+                
+
+                canvas.width = width;
+
+                canvas.height = height;
+
+
+
+                ctx.drawImage(preview, 0, 0, width, height);
+
+
+
+                canvas.toBlob(blob => {
+
+                    const url = URL.createObjectURL(blob);
+
+                    downloadLink.href = url;
+
+                    downloadLink.style.display = 'block';
+
+                    loading.style.display = 'none';
+
+                    window.scrollTo(0, document.body.scrollHeight);
+
+                }, 'image/jpeg', 0.9);
+
+            }, 500);
+
+        }
+
+
+
+        function showError(message) {
+
+            const error = document.createElement('div');
+
+            error.className = 'error-toast';
+
+            error.textContent = message;
+
+            document.body.appendChild(error);
+
+            
+
+            setTimeout(() => {
+
+                error.remove();
+
+            }, 3000);
+
+        }
+
+    </script>
+
+</body>
+
+</html>
+
+Share
+Comments
+
+Popular posts from this blog
+Earn Money From Google AdMob ( Make Money Online 2024 ) | PASSIVE INCOME 2024
+Earn Passive Money From Google AdMob ( Make Money Online ) |  https://cpamarketingbeginners.blogspot.com/ Admob Earnings Earn Instantly Hundreds of dollars without doing hard work with Google AdMob. Google Ad Mob is a Google's Product. AdMob is A Just like AdSense. You can Earn Money From Your Website and YouTube Channel Using AdSense. But if you want to earn money from Your app and Game then you can Use AdMob.  Google Run Ads on Website, YouTube Channel, App and Game Application. when Someone Clicks on that ads then You can Earn money. You can Earn $1 - $5 only on one Click.  Earning depends on Traffic quality and Category. If you have made your website, YouTube Channel or App on Business category and If you are getting traffic from United states, United kingdom, Canada, Germany.... then you can earn high amount of money. In this article, I am going to share with you how you can earn money from admob. read this full article. Guys, First of all you will have to make game ...
+Share
+ 7 comments
+Read more
+Submit Your Website on all Search Engines to get Traffic on your website
+  Submit Your Website on all Search Engines to get Traffic on your website In this article, I'm going to give you 63 Big Search engines to submit your website. after submit your website on these Search engines your website can Instantly start to get lots of traffic. you will have to submit your website on all search engines. if you will not submit your website on search engines then your website will not show in Search results.  yandex search engines like when someone will try to search your website on Google then your website will not show in search result. you will have to submit your website on Google Console. similarly I have collected all search Engines to submit your website and get free lots of traffic. read this full articles. 63+ Search Engines that I have collected to submit your website and get over 500K free traffic instantly Today..   Check out all these search engines -  1 -  ASR (Active Search Results ) 2 -  Google 3-  Amidalla 4 - ...
+Share
+ 4 comments
+Read more
+CrakRevenue Tutorials for Beginners ( Earn Money Online in 2024 )
+Best and High paying Crakrevenue Affiliate Network. (CrakRevenue Tutorials for Beginners) In this article, I'm going to share with you best crakrevenue earning methods. it's for completely beginners. You can start making money from today. i will also share with you my crakrevenue earnings . Read this full articles.  (CrakRevenue Tutorials for Beginners) First of all you will have to create account on crakrevenue affiliate network. after that you can promote high paying cpa offers. Crakrevenue cpa offers you can promote Jerkmate cpa offers. when someone will click on this Jerkmate cpa offer and sign up after that they will verify their email address then you will earn $7.50 per sign up. as you can see in the Image. this offer is DOI. That means Sign up + Confirm Email address. suppose if it will be SOI Offers then you just need to generate only Sign up. when someone will just sign up then you can earn. (CrakRevenue Tutorials for Beginners) Next step you will have to create ...
+Share
+ 2 comments
+Read more
+
+Followers
+
+CPA Marketing full course Ebook
+Buy Now
+Hidden Secrets of CPA Marketing
+Hidden Secrets To get Success On Google AdMob
+Submit Your Website on all Search Engines to get Traffic on your website
+How to verify Identity On Crakrevenue Network
+HTML Code for Currency and measurement convertor
+Home
+Html code for Note taking application
+YouTube Thumbnail Downloader
+Make Paint website
+HTML Code for Tic tac toe Game with beautiful interface
+HTML Code for video downloader app
+html code for paint application
+HTML Code for Image Resizer app
+Keywords
+About Me
+My photo
+Mumtaz
+I'm a CPA Marketer. I have over 6 years Experience in CPA Marketing And Game Development. You can learn here about CPA Marketing and earn money from other sources. if you want to learn and earn money using cpa marketing network and AdMob then you should follow me on this blog. Thanks
+Visit profile
+Navigation
+Contact Us
+Privacy Policy
+Disclaimer
+DMCA Policy
+About Us
+Terms and Conditions
+ Powered by Blogger
+CPA Marketing Course In Free (CPA Marketing for beginners)
